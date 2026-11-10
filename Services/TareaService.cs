@@ -16,6 +16,7 @@
    along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using TaskFlow_API.Context;
 using TaskFlow_API.DTOs;
@@ -31,14 +32,16 @@ public class TareaService : ITareaService
     {
         _context = context;
     }
-    
+
     // DRY
     private async Task<List<Etiqueta>> ObtenerOCrearEtiquetasAsync(
         List<EtiquetaDTO> etiquetasDto)
     {
         // 1. Obtener los nombres recibidos de la Request.
         List<string> nombres = etiquetasDto
-            .Select(e => e.Nombre)
+            // https://stackoverflow.com/questions/206717/how-do-i-replace-multiple-spaces-with-a-single-space-in-c
+            .Select(e => Regex.Replace(e.Nombre.Trim(), @"\s+", " ")
+                .ToLowerInvariant())
             .ToList();
 
         // 2. Buscar etiquetas existentes.
@@ -73,9 +76,10 @@ public class TareaService : ITareaService
         return await _context.Tareas.Include(e => e.Etiquetas).ToListAsync();
     }
 
-    public Task<Tarea?> ObtenerPorIdAsync(int id)
+    public async Task<Tarea?> ObtenerPorIdAsync(int id)
     {
-        throw new NotImplementedException();
+        // https://stackoverflow.com/questions/40360512/findasync-and-include-linq-statements
+        return await _context.Tareas.Include(e => e.Etiquetas).FirstOrDefaultAsync(i => i.Id == id);
     }
 
     public async Task<Tarea> CrearAsync(TareaDTO dto)
@@ -117,8 +121,18 @@ public class TareaService : ITareaService
         return true;
     }
 
-    public Task<bool> EliminarAsync(int id)
+    public async Task<bool> EliminarAsync(int id)
     {
-        throw new NotImplementedException();
+        // https://stackoverflow.com/questions/15227339/deleting-an-item-with-entity-framework
+        Tarea? t = await _context.Tareas.FirstOrDefaultAsync(t => t.Id == id);
+        if (t == null)
+        {
+            return false;
+        }
+
+        _context.Tareas.Remove(t);
+        await _context.SaveChangesAsync();
+
+        return true;
     }
 }

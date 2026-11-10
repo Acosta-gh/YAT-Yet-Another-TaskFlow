@@ -1,17 +1,17 @@
 /*
  * TaskFlow API - REST API for project and task management.
    Copyright (C) 2026 Cristian Darío Acosta
-   
+
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
-   
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
    GNU General Public License for more details.
-   
+
    You should have received a copy of the GNU General Public License
    along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -34,13 +34,15 @@ public class ProyectoService : IProyectoService
 
     public async Task<List<Proyecto>> ObtenerTodosAsync()
     {
-        
-        return await _context.Proyectos.Include(t => t.Tareas).ThenInclude(e=>e.Etiquetas).ToListAsync();
+        return await _context.Proyectos.Include(t => t.Tareas).ThenInclude(e => e.Etiquetas).ToListAsync();
     }
 
-    public Task<Proyecto?> ObtenerPorIdAsync(int id)
+    public async Task<Proyecto?> ObtenerPorIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await _context.Proyectos
+            .Include(t => t.Tareas)
+            .ThenInclude(e => e.Etiquetas)
+            .FirstOrDefaultAsync(p => p.Id == id);
     }
 
     public async Task<Proyecto> CrearAsync(ProyectoDTO dto)
@@ -52,13 +54,36 @@ public class ProyectoService : IProyectoService
         return p;
     }
 
-    public Task<bool> ActualizarAsync(int id, ProyectoDTO dto)
+    public async Task<bool> ActualizarAsync(int id, ProyectoDTO dto)
     {
-        throw new NotImplementedException();
+        Proyecto? p = await _context.Proyectos
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (p == null || dto.Nombre == null)
+        {
+            return false;
+        }
+
+        p.Nombre = dto.Nombre;
+
+        await _context.SaveChangesAsync();
+
+        return true;
     }
 
-    public Task<bool> EliminarAsync(int id)
+    public async Task<bool> EliminarAsync(int id)
     {
-        throw new NotImplementedException();
+        Proyecto? p = await _context.Proyectos
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (p == null)
+        {
+            return false;
+        }
+
+        _context.Proyectos.Remove(p);
+        await _context.SaveChangesAsync();
+
+        return true;
     }
 }
