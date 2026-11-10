@@ -63,6 +63,9 @@ namespace TaskFlow_API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Estado")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("timestamp with time zone");
 
@@ -70,6 +73,9 @@ namespace TaskFlow_API.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<int>("Prioridad")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -89,6 +95,9 @@ namespace TaskFlow_API.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
 
+                    b.Property<int>("Estado")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("timestamp with time zone");
 
@@ -96,6 +105,9 @@ namespace TaskFlow_API.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<int>("Prioridad")
+                        .HasColumnType("integer");
 
                     b.Property<int>("ProyectoId")
                         .HasColumnType("integer");

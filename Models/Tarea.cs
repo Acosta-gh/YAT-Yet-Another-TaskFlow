@@ -18,8 +18,17 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using TaskFlow_API.Enums;
 
 namespace TaskFlow_API.Models;
+
+public enum EstadoTarea
+{
+    Pendiente = 1,
+    EnProgreso = 2,
+    Completada = 3,
+    Cancelada = 4
+}
 
 public class Tarea
 {
@@ -35,4 +44,8 @@ public class Tarea
     [JsonIgnore] public Proyecto Proyecto { get; set; } = null!;
 
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
+    
+    public EstadoTarea Estado { get; set; } = EstadoTarea.Pendiente;
+    
+    public Prioridad Prioridad { get; set; } = Prioridad.Baja;
 }

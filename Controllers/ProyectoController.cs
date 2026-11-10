@@ -36,36 +36,61 @@ public class ProyectoController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> ObtenerTodos()
     {
-        return Ok(await _proyectoService.ObtenerTodosAsync());
+        var proyectos = await _proyectoService.ObtenerTodosAsync();
+
+        if (proyectos == null)
+        {
+            return NotFound();
+        }
+        
+        return Ok(proyectos);
     }
 
     [HttpGet("{id:int}")]
-    public Task<IActionResult> ObtenerPorId(int id)
+    public async Task<IActionResult> ObtenerPorId(int id)
     {
-        throw new NotImplementedException();
+        var proyecto = await _proyectoService.ObtenerPorIdAsync(id);
+        if (proyecto == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(proyecto);
     }
 
     [HttpPost]
     public async Task<IActionResult> Crear(ProyectoDTO dto)
     {
-        var ProyectoCreado = await _proyectoService.CrearAsync(dto);
+        var proyectoCreado = await _proyectoService.CrearAsync(dto);
         
         return CreatedAtAction(
             nameof(ObtenerPorId),
-            new { id = ProyectoCreado.Id },
-            ProyectoCreado
+            new { id = proyectoCreado.Id },
+            proyectoCreado
         );
     }
 
     [HttpPut("{id:int}")]
-    public Task<IActionResult> Actualizar(int id, [FromBody] ProyectoDTO dto)
+    public async Task<IActionResult> Actualizar(int id, [FromBody] ProyectoDTO dto)
     {
-        throw new NotImplementedException();
+        var actualizado = await _proyectoService.ActualizarAsync(id, dto);
+        if (!actualizado)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
     }
 
     [HttpDelete("{id:int}")]
-    public Task<IActionResult> Eliminar(int id)
+    public async Task<IActionResult> Eliminar(int id)
     {
-        throw new NotImplementedException();
+        var eliminado = await _proyectoService.EliminarAsync(id);
+        if (!eliminado)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
     }
 }

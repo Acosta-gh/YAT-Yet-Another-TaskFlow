@@ -7,6 +7,7 @@ Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
+// https://github.com/PedroSmaxY/SchedulingSystemAPI/blob/main/Program.cs
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 connectionString = connectionString.Replace("${DB_PASSWORD}",Environment.GetEnvironmentVariable("DB_PASSWORD"));
 

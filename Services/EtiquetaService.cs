@@ -16,6 +16,7 @@
    along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+using Microsoft.EntityFrameworkCore;
 using TaskFlow_API.Context;
 using TaskFlow_API.DTOs;
 using TaskFlow_API.Models;
@@ -31,14 +32,14 @@ public class EtiquetaService : IEtiquetaService
         _dbContext = dbContext;
     }
 
-    public Task<List<Etiqueta>> ObtenerTodosAsync()
+    public async Task<List<Etiqueta>> ObtenerTodosAsync()
     {
-        throw new NotImplementedException();
+        return await _dbContext.Etiquetas.ToListAsync();
     }
 
-    public Task<Etiqueta?> ObtenerPorIdAsync(int id)
+    public async Task<Etiqueta?> ObtenerPorIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await _dbContext.Etiquetas.FirstOrDefaultAsync(e => e.Id == id);
     }
 
     public async Task<Etiqueta> CrearAsync(EtiquetaDTO dto)
@@ -54,13 +55,31 @@ public class EtiquetaService : IEtiquetaService
         return etiqueta;
     }
 
-    public Task<bool> ActualizarAsync(int id, EtiquetaDTO dto)
+    public async Task<bool> ActualizarAsync(int id, EtiquetaDTO dto)
     {
-        throw new NotImplementedException();
+        Etiqueta? etiqueta = await _dbContext.Etiquetas.FirstOrDefaultAsync(e => e.Id == id);
+        if (etiqueta == null || dto.Nombre == null)
+        {
+            return false;
+        }
+
+        etiqueta.Nombre = dto.Nombre;
+        await _dbContext.SaveChangesAsync();
+
+        return true;
     }
 
-    public Task<bool> EliminarAsync(int id)
+    public async Task<bool> EliminarAsync(int id)
     {
-        throw new NotImplementedException();
+        Etiqueta? etiqueta = await _dbContext.Etiquetas.FirstOrDefaultAsync(e => e.Id == id);
+        if (etiqueta == null)
+        {
+            return false;
+        }
+
+        _dbContext.Etiquetas.Remove(etiqueta);
+        await _dbContext.SaveChangesAsync();
+
+        return true;
     }
 }

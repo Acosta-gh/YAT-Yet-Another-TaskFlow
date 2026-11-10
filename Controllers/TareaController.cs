@@ -40,9 +40,15 @@ public class TareaController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public Task<IActionResult> ObtenerPorId(int id)
+    public async Task<IActionResult> ObtenerPorId(int id)
     {
-        throw new NotImplementedException();
+        var tarea = await _tareaService.ObtenerPorIdAsync(id);
+        if (tarea == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(tarea);
     }
 
     [HttpPost]
@@ -60,12 +66,24 @@ public class TareaController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Actualizar(int id, TareaDTO dto)
     {
-        return Ok(await _tareaService.ActualizarAsync(id, dto));
+        var actualizado = await _tareaService.ActualizarAsync(id, dto);
+        if (!actualizado)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
     }
 
     [HttpDelete("{id:int}")]
-    public Task<IActionResult> Eliminar(int id)
+    public async Task<IActionResult> Eliminar(int id)
     {
-        throw new NotImplementedException();
+        var eliminado = await _tareaService.EliminarAsync(id);
+        if (!eliminado)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
     }
 }

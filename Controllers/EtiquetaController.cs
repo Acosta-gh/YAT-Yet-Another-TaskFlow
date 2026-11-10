@@ -34,15 +34,21 @@ public class EtiquetaController : ControllerBase
     }
 
     [HttpGet]
-    public Task<IActionResult> ObtenerTodos()
+    public async Task<IActionResult> ObtenerTodos()
     {
-        throw new NotImplementedException();
+        return Ok(await _etiquetaService.ObtenerTodosAsync());
     }
 
     [HttpGet("{id:int}")]
-    public Task<IActionResult> ObtenerPorId(int id)
+    public async Task<IActionResult> ObtenerPorId(int id)
     {
-        throw new NotImplementedException();
+        var etiqueta = await _etiquetaService.ObtenerPorIdAsync(id);
+        if (etiqueta == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(etiqueta);
     }
 
     [HttpPost]
@@ -58,14 +64,26 @@ public class EtiquetaController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public Task<IActionResult> Actualizar(int id, [FromBody] EtiquetaDTO dto)
+    public async Task<IActionResult> Actualizar(int id, [FromBody] EtiquetaDTO dto)
     {
-        throw new NotImplementedException();
+        var actualizado = await _etiquetaService.ActualizarAsync(id, dto);
+        if (!actualizado)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
     }
 
     [HttpDelete("{id:int}")]
-    public Task<IActionResult> Eliminar(int id)
+    public async Task<IActionResult> Eliminar(int id)
     {
-        throw new NotImplementedException();
+        var eliminado = await _etiquetaService.EliminarAsync(id);
+        if (!eliminado)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
     }
 }
