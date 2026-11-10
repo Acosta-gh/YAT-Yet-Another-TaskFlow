@@ -29,6 +29,5 @@ public class TareaDTO
 
     public int ProyectoId { get; set; }
 
-    [JsonIgnore]
     public List<EtiquetaDTO> Etiquetas { get; set; } = new List<EtiquetaDTO>();
 }
